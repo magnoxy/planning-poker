@@ -1,0 +1,218 @@
+:root {
+  --primary-color: #2c3e50;
+  --accent-color: #3498db;
+  --bg-color: #f4f7f6;
+  --text-color: #333;
+  --card-bg: #fff;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --success-color: #27ae60;
+  --danger-color: #e74c3c;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.lobby-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
+
+.card {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  max-width: 400px;
+}
+
+h1, h2 {
+  color: var(--primary-color);
+}
+
+.input-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: opacity 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  background-color: transparent;
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+  margin-top: 10px;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 1rem;
+}
+
+.session-main {
+  display: grid;
+  grid-template-columns: 300px 1fr 250px;
+  gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .session-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.task-list {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.task-item {
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.task-item.active {
+  background-color: #e3f2fd;
+  border-left: 4px solid var(--accent-color);
+}
+
+.current-task {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2rem;
+}
+
+.deck {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.deck-card {
+  width: 60px;
+  height: 90px;
+  background: #fff;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.deck-card:hover {
+  transform: translateY(-5px);
+  background-color: #f0f7ff;
+}
+
+.deck-card.selected {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+.participant-list {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+}
+
+.participant-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: 12px;
+  background-color: #eee;
+}
+
+.status-badge.voted {
+  background-color: var(--success-color);
+  color: #fff;
+}
+
+.vote-value {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.admin-controls {
+  margin-top: 1rem;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.consensus {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--success-color);
+  text-align: center;
+}
+
+.error-message {
+  color: var(--danger-color);
+  margin-bottom: 1rem;
+}
