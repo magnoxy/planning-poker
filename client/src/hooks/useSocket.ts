@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import type { Session } from '../types';
 
-const SOCKET_SERVER_URL = `${window.location.protocol}//${window.location.hostname}:3001`;
+const SOCKET_SERVER_URL = import.meta.env.VITE_SERVER_URL || `${window.location.protocol}//${window.location.hostname}:3001`;
 
 export const useSocket = () => {
   const socketRef = useRef<Socket | null>(null);
