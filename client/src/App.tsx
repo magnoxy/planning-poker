@@ -20,6 +20,9 @@ function App() {
     addTask,
     editTask,
     removeTask,
+    proposeAdminTransfer,
+    acceptAdminTransfer,
+    declineAdminTransfer,
   } = useSocket();
 
   return (
@@ -43,6 +46,9 @@ function App() {
           onAddTask={(task) => addTask(session.id, task)}
           onEditTask={(index, task) => editTask(session.id, index, task)}
           onRemoveTask={(index) => removeTask(session.id, index)}
+          onProposeAdminTransfer={(targetUserId) => proposeAdminTransfer(session.id, targetUserId)}
+          onAcceptAdminTransfer={() => acceptAdminTransfer(session.id)}
+          onDeclineAdminTransfer={() => declineAdminTransfer(session.id)}
         />
       )}
     </div>

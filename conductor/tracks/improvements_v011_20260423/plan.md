@@ -40,12 +40,12 @@
     - [x] Ensure non-numeric votes like '?' or '☕' are excluded from the calculation.
 
 ## Phase 4: Admin Transfer
-- [ ] Task: Write Tests for Admin Transfer
-    - [ ] Write server tests for proposing admin transfer and accepting/rejecting.
-- [ ] Task: Implement Admin Transfer Flow
-    - [ ] Add UI for current admin to propose transfer to a specific user.
-    - [ ] Add UI prompt for the target user to accept/decline.
-    - [ ] Update room state on server and broadcast new admin.
+- [x] Task: Write Tests for Admin Transfer
+    - [x] Write server tests for proposing admin transfer and accepting/rejecting.
+- [x] Task: Implement Admin Transfer Flow
+    - [x] Add UI for current admin to propose transfer to a specific user.
+    - [x] Add UI prompt for the target user to accept/decline.
+    - [x] Update room state on server and broadcast new admin.
 - [ ] Task: Conductor - User Manual Verification 'Admin Transfer' (Protocol in workflow.md)
 
 ## Phase 5: Direct Card Selection

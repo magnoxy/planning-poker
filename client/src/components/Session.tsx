@@ -14,6 +14,9 @@ interface SessionProps {
   onAddTask: (task: Task) => void;
   onEditTask: (index: number, task: Task) => void;
   onRemoveTask: (index: number) => void;
+  onProposeAdminTransfer: (targetUserId: string) => void;
+  onAcceptAdminTransfer: () => void;
+  onDeclineAdminTransfer: () => void;
 }
 
 const CARDS = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
@@ -30,6 +33,9 @@ export const Session: React.FC<SessionProps> = ({
   onAddTask,
   onEditTask,
   onRemoveTask,
+  onProposeAdminTransfer,
+  onAcceptAdminTransfer,
+  onDeclineAdminTransfer,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAddingTask, setIsAddingTask] = React.useState(false);
@@ -117,6 +123,20 @@ export const Session: React.FC<SessionProps> = ({
           <div className="countdown-number">{session.countdown}</div>
         </div>
       )}
+
+      {session.pendingAdminId === userId && (
+        <div className="modal-overlay">
+          <div className="card" style={{ textAlign: 'center' }}>
+            <h2>Admin Transfer Request</h2>
+            <p>The current admin wants to transfer room ownership to you. Do you accept?</p>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+              <button onClick={onAcceptAdminTransfer} style={{ flex: 1 }}>Accept</button>
+              <button onClick={onDeclineAdminTransfer} className="secondary-btn" style={{ flex: 1 }}>Decline</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className="session-header">
         <div>
           <h1>Session: {session.id}</h1>
@@ -265,13 +285,24 @@ export const Session: React.FC<SessionProps> = ({
         <aside className="participant-list">
           <h2>Participants</h2>
           {session.participants.map(p => (
-            <div key={p.id} className="participant-item">
-              <span>{p.name} {p.id === userId ? '(You)' : ''}</span>
-              <span className={`status-badge ${session.votes[p.id] ? 'voted' : ''}`}>
-                {session.showVotes 
-                  ? (session.votes[p.id] || '...') 
-                  : (session.votes[p.id] ? 'Voted' : 'Voting...')}
-              </span>
+            <div key={p.id} className="participant-item" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                <span>{p.name} {p.id === userId ? '(You)' : ''}</span>
+                <span className={`status-badge ${session.votes[p.id] ? 'voted' : ''}`}>
+                  {session.showVotes 
+                    ? (session.votes[p.id] || '...') 
+                    : (session.votes[p.id] ? 'Voted' : 'Voting...')}
+                </span>
+              </div>
+              {isAdmin && p.id !== userId && (
+                <button 
+                  onClick={() => { if(confirm(`Propose admin transfer to ${p.name}?`)) onProposeAdminTransfer(p.id); }}
+                  className="secondary-btn"
+                  style={{ padding: '2px 6px', fontSize: '10px', marginTop: '4px', width: '100%' }}
+                >
+                  Make Admin
+                </button>
+              )}
             </div>
           ))}
         </aside>

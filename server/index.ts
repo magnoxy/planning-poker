@@ -110,6 +110,28 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('proposeAdminTransfer', ({ sessionId, targetUserId }: { sessionId: string; targetUserId: string }) => {
+    const session = roomManager.proposeAdminTransfer(sessionId, targetUserId);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
+  socket.on('acceptAdminTransfer', ({ sessionId, userId }: { sessionId: string; userId: string }) => {
+    const session = roomManager.acceptAdminTransfer(sessionId, userId);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
+  socket.on('declineAdminTransfer', ({ sessionId }: { sessionId: string }) => {
+    const session = roomManager.getSession(sessionId);
+    if (session) {
+      session.pendingAdminId = undefined;
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
   socket.on('disconnecting', () => {
     /* 
     Keep participants even after disconnect for session persistence.

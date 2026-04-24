@@ -61,4 +61,12 @@ describe('RoomManager', () => {
     expect(session2?.participants).toHaveLength(2); // Admin + John
     expect(session2?.participants.filter(p => p.id === userId)).toHaveLength(1);
   });
+
+  it('should allow admin to transfer ownership', () => {
+    const userId = 'user-2';
+    roomManager.joinSession(sessionId, { id: userId, name: 'User 2' });
+    
+    const session = roomManager.transferAdmin(sessionId, userId);
+    expect(session?.adminId).toBe(userId);
+  });
 });

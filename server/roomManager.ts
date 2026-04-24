@@ -172,6 +172,35 @@ class RoomManager {
     }
     return undefined;
   }
+
+  proposeAdminTransfer(sessionId: string, targetUserId: string): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session && session.participants.find(p => p.id === targetUserId)) {
+      session.pendingAdminId = targetUserId;
+      return session;
+    }
+    return undefined;
+  }
+
+  acceptAdminTransfer(sessionId: string, userId: string): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session && session.pendingAdminId === userId) {
+      session.adminId = userId;
+      session.pendingAdminId = undefined;
+      return session;
+    }
+    return undefined;
+  }
+
+  transferAdmin(sessionId: string, userId: string): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session && session.participants.find(p => p.id === userId)) {
+      session.adminId = userId;
+      session.pendingAdminId = undefined;
+      return session;
+    }
+    return undefined;
+  }
 }
 
 export const roomManager = new RoomManager();

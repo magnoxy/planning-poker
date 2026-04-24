@@ -104,6 +104,18 @@ export const useSocket = () => {
     socketRef.current?.emit('removeTask', { sessionId, index });
   };
 
+  const proposeAdminTransfer = (sessionId: string, targetUserId: string) => {
+    socketRef.current?.emit('proposeAdminTransfer', { sessionId, targetUserId });
+  };
+
+  const acceptAdminTransfer = (sessionId: string) => {
+    socketRef.current?.emit('acceptAdminTransfer', { sessionId, userId });
+  };
+
+  const declineAdminTransfer = (sessionId: string) => {
+    socketRef.current?.emit('declineAdminTransfer', { sessionId });
+  };
+
   return {
     socketId: socketRef.current?.id,
     userId,
@@ -121,6 +133,9 @@ export const useSocket = () => {
     addTask,
     editTask,
     removeTask,
+    proposeAdminTransfer,
+    acceptAdminTransfer,
+    declineAdminTransfer,
     setError,
   };
 };
