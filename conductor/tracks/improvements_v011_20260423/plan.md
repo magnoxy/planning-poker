@@ -48,10 +48,15 @@
     - [x] Update room state on server and broadcast new admin.
 - [x] Task: Conductor - User Manual Verification 'Admin Transfer' (Protocol in workflow.md)
 
-## Phase 5: Direct Card Selection
-- [ ] Task: Write Tests for Direct Card Selection
-    - [ ] Write tests for setting the active voting card by ID instead of sequential navigation.
-- [ ] Task: Implement Direct Selection UI
-    - [ ] Add UI for the admin to click on any card in the list to make it active.
-    - [ ] Emit socket event to change active card and broadcast to all users.
-- [ ] Task: Conductor - User Manual Verification 'Direct Card Selection' (Protocol in workflow.md)
+## Phase 5: Direct Card Selection and Task Reordering
+- [x] Task: Write Tests for Direct Card Selection and Points Saving
+    - [x] Write tests for setting the active voting card by ID/index instead of sequential navigation.
+    - [x] Write tests for saving the consensus points to a specific task.
+    - [x] Write tests for reordering tasks.
+- [x] Task: Implement Direct Selection and Points UI
+    - [x] Add UI for the admin to click on any card in the list to make it active.
+    - [x] Emit socket event to change active card and broadcast to all users.
+    - [x] Automatically save consensus points to the active task when votes are revealed.
+    - [x] Implement drag-and-drop to reorder tasks in the sidebar.
+    - [x] Emit socket event to update task order on the server.
+- [x] Task: Conductor - User Manual Verification 'Direct Card Selection' (Protocol in workflow.md)

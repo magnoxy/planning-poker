@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useSocket } from './useSocket';
-import { Socket } from 'socket.io-client';
 
 // Mock socket.io-client
 const mockSocket = {
@@ -18,6 +17,7 @@ vi.mock('socket.io-client', () => ({
 describe('useSocket', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it('should add a task manually', () => {
@@ -71,12 +71,11 @@ describe('useSocket', () => {
   it('should save session to localStorage when joined', () => {
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
     const mockUserId = 'test-user-id';
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => {
-      if (key === 'planning_poker_user_id') return mockUserId;
-      return null;
-    });
+    
+    // Setup initial userId in localStorage
+    localStorage.setItem('planning_poker_user_id', mockUserId);
 
-    const { result } = renderHook(() => useSocket());
+    renderHook(() => useSocket());
     
     // Simulate socket emitting sessionUpdated
     const mockSession = { 
@@ -90,8 +89,10 @@ describe('useSocket', () => {
     
     act(() => {
       // Find the handler for sessionUpdated and call it
-      const handler = mockSocket.on.mock.calls.find(call => call[0] === 'sessionUpdated')[1];
-      handler(mockSession);
+      const sessionUpdatedCall = mockSocket.on.mock.calls.find(call => call[0] === 'sessionUpdated');
+      if (sessionUpdatedCall) {
+        sessionUpdatedCall[1](mockSession);
+      }
     });
 
     expect(setItemSpy).toHaveBeenCalledWith('planning_poker_session', JSON.stringify({

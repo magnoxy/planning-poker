@@ -29,6 +29,12 @@ describe('Session Component', () => {
     onAddTask: vi.fn(),
     onEditTask: vi.fn(),
     onRemoveTask: vi.fn(),
+    onProposeAdminTransfer: vi.fn(),
+    onAcceptAdminTransfer: vi.fn(),
+    onDeclineAdminTransfer: vi.fn(),
+    onSaveTaskPoints: vi.fn(),
+    onSetCurrentTask: vi.fn(),
+    onReorderTasks: vi.fn(),
   };
 
   it('should calculate consensus as nearest Fibonacci value to the average', () => {

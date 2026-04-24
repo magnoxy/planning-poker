@@ -1,6 +1,22 @@
 import React, { useRef } from 'react';
 import type { Session as SessionType, Task } from '../types';
 import Papa from 'papaparse';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface SessionProps {
   session: SessionType;
@@ -17,9 +33,90 @@ interface SessionProps {
   onProposeAdminTransfer: (targetUserId: string) => void;
   onAcceptAdminTransfer: () => void;
   onDeclineAdminTransfer: () => void;
+  onSaveTaskPoints: (index: number, points: string) => void;
+  onSetCurrentTask: (index: number) => void;
+  onReorderTasks: (oldIndex: number, newIndex: number) => void;
 }
 
 const CARDS = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
+
+interface SortableTaskItemProps {
+  task: Task;
+  id: string;
+  isActive: boolean;
+  isAdmin: boolean;
+  onSelect: () => void;
+  onEdit: () => void;
+  onRemove: () => void;
+}
+
+const SortableTaskItem: React.FC<SortableTaskItemProps> = ({
+  task,
+  id,
+  isActive,
+  isAdmin,
+  onSelect,
+  onEdit,
+  onRemove,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id, disabled: !isAdmin });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    cursor: isAdmin ? (isDragging ? 'grabbing' : 'grab') : 'default',
+    zIndex: isDragging ? 100 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`task-item ${isActive ? 'active' : ''}`}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).tagName !== 'BUTTON') {
+          onSelect();
+        }
+      }}
+      {...attributes}
+      {...(isAdmin ? listeners : {})}
+    >
+      <div style={{ flex: 1, marginRight: '10px' }}>
+        <strong style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>{task.title}</strong>
+        {task.points && <span className="status-badge voted" style={{ fontSize: '10px' }}>{task.points} pts</span>}
+      </div>
+      {isAdmin && (
+        <div style={{ display: 'flex', gap: '4px' }} onClick={e => e.stopPropagation()}>
+          <button 
+            onClick={onEdit}
+            className="secondary-btn"
+            style={{ padding: '2px 6px', fontSize: '10px', marginTop: 0 }}
+          >
+            Edit
+          </button>
+          <button 
+            onClick={onRemove}
+            className="secondary-btn"
+            style={{ padding: '2px 6px', fontSize: '10px', color: '#ff4d4d', marginTop: 0 }}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Session: React.FC<SessionProps> = ({
   session,
@@ -36,12 +133,65 @@ export const Session: React.FC<SessionProps> = ({
   onProposeAdminTransfer,
   onAcceptAdminTransfer,
   onDeclineAdminTransfer,
+  onSaveTaskPoints,
+  onSetCurrentTask,
+  onReorderTasks,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAddingTask, setIsAddingTask] = React.useState(false);
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
   const [taskForm, setTaskForm] = React.useState<Task>({ title: '', description: '' });
   const [pendingTransferTarget, setPendingTransferTarget] = React.useState<{ id: string, name: string } | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = parseInt(active.id as string, 10);
+      const newIndex = parseInt(over.id as string, 10);
+      onReorderTasks(oldIndex, newIndex);
+    }
+  };
+
+  const isAdmin = session.adminId === userId;
+
+  const calculateConsensus = () => {
+    const numericVotes = Object.values(session.votes)
+      .map(v => parseFloat(v))
+      .filter(v => !isNaN(v));
+      
+    if (numericVotes.length === 0) return null;
+    
+    const sum = numericVotes.reduce((acc, curr) => acc + curr, 0);
+    const average = sum / numericVotes.length;
+    
+    const fibValues = [0, 1, 2, 3, 5, 8, 13, 21];
+    const closest = fibValues.reduce((prev, curr) => {
+      return (Math.abs(curr - average) < Math.abs(prev - average) ? curr : prev);
+    });
+
+    return closest.toString();
+  };
+
+  const consensusValue = session.showVotes ? calculateConsensus() : null;
+
+  // Automatically save points when votes are revealed
+  React.useEffect(() => {
+    if (isAdmin && session.showVotes && consensusValue) {
+      onSaveTaskPoints(session.currentTaskIndex, consensusValue);
+    }
+  }, [session.showVotes, isAdmin, session.currentTaskIndex]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -94,28 +244,7 @@ export const Session: React.FC<SessionProps> = ({
   };
 
   const currentTask = session.tasks[session.currentTaskIndex];
-  const isAdmin = session.adminId === userId;
   const myVote = session.votes[userId];
-
-  const calculateConsensus = () => {
-    const numericVotes = Object.values(session.votes)
-      .map(v => parseFloat(v))
-      .filter(v => !isNaN(v));
-      
-    if (numericVotes.length === 0) return null;
-    
-    const sum = numericVotes.reduce((acc, curr) => acc + curr, 0);
-    const average = sum / numericVotes.length;
-    
-    const fibValues = [0, 1, 2, 3, 5, 8, 13, 21];
-    const closest = fibValues.reduce((prev, curr) => {
-      return (Math.abs(curr - average) < Math.abs(prev - average) ? curr : prev);
-    });
-
-    return closest.toString();
-  };
-
-  const consensusValue = session.showVotes ? calculateConsensus() : null;
 
   return (
     <div className="container">
@@ -172,7 +301,7 @@ export const Session: React.FC<SessionProps> = ({
               <button 
                 onClick={() => { setIsAddingTask(true); setEditingIndex(null); setTaskForm({ title: '', description: '' }); }}
                 className="secondary-btn"
-                style={{ padding: '4px 8px', fontSize: '12px' }}
+                style={{ padding: '4px 8px', fontSize: '12px', marginTop: 0 }}
               >
                 + Add
               </button>
@@ -198,7 +327,7 @@ export const Session: React.FC<SessionProps> = ({
               />
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button type="submit" style={{ flex: 1, padding: '0.5rem' }}>Save</button>
-                <button type="button" onClick={() => { setIsAddingTask(false); setEditingIndex(null); }} className="secondary-btn" style={{ flex: 1, padding: '0.5rem' }}>Cancel</button>
+                <button type="button" onClick={() => { setIsAddingTask(false); setEditingIndex(null); }} className="secondary-btn" style={{ flex: 1, padding: '0.5rem', marginTop: 0 }}>Cancel</button>
               </div>
             </form>
           )}
@@ -215,41 +344,35 @@ export const Session: React.FC<SessionProps> = ({
               <button onClick={() => fileInputRef.current?.click()} style={{ width: '100%', marginBottom: '10px' }}>
                 Import CSV
               </button>
-              <button onClick={handleExport} className="secondary-btn" style={{ width: '100%' }}>
+              <button onClick={handleExport} className="secondary-btn" style={{ width: '100%', marginTop: 0 }}>
                 Export Results
               </button>
             </div>
           )}
-          {session.tasks.map((task, index) => (
-            <div
-              key={index}
-              className={`task-item ${index === session.currentTaskIndex ? 'active' : ''}`}
-              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={session.tasks.map((_, index) => index.toString())}
+              strategy={verticalListSortingStrategy}
             >
-              <div style={{ flex: 1, marginRight: '10px' }}>
-                <strong style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>{task.title}</strong>
-                {task.points && <span className="status-badge voted" style={{ fontSize: '10px' }}>{task.points} pts</span>}
-              </div>
-              {isAdmin && (
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <button 
-                    onClick={() => startEdit(index)}
-                    className="secondary-btn"
-                    style={{ padding: '2px 6px', fontSize: '10px' }}
-                  >
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => { if(confirm('Remove this task?')) onRemoveTask(index); }}
-                    className="secondary-btn"
-                    style={{ padding: '2px 6px', fontSize: '10px', color: '#ff4d4d' }}
-                  >
-                    Remove
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+              {session.tasks.map((task, index) => (
+                <SortableTaskItem
+                  key={index}
+                  id={index.toString()}
+                  task={task}
+                  isActive={index === session.currentTaskIndex}
+                  isAdmin={isAdmin}
+                  onSelect={() => isAdmin && onSetCurrentTask(index)}
+                  onEdit={() => startEdit(index)}
+                  onRemove={() => { if(confirm('Remove this task?')) onRemoveTask(index); }}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
         </aside>
 
         <main>
@@ -287,7 +410,7 @@ export const Session: React.FC<SessionProps> = ({
           {isAdmin && currentTask && (
             <div className="admin-controls">
               <button onClick={onReveal} disabled={session.showVotes}>Reveal Votes</button>
-              <button onClick={onReset} className="secondary-btn">Reset Votes</button>
+              <button onClick={onReset} className="secondary-btn" style={{ marginTop: 0 }}>Reset Votes</button>
               <button onClick={() => onPrev()} disabled={session.currentTaskIndex === 0}>Prev Task</button>
               <button onClick={() => onNext(consensusValue || undefined)} disabled={session.currentTaskIndex === session.tasks.length - 1}>
                 Next Task

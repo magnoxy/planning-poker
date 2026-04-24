@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import type { Session } from '../types';
+import type { Session, Task } from '../types';
 
 const SOCKET_SERVER_URL = import.meta.env.VITE_SERVER_URL || `${window.location.protocol}//${window.location.hostname}:3001`;
 
@@ -116,6 +116,18 @@ export const useSocket = () => {
     socketRef.current?.emit('declineAdminTransfer', { sessionId });
   };
 
+  const saveTaskPoints = (sessionId: string, index: number, points: string) => {
+    socketRef.current?.emit('saveTaskPoints', { sessionId, index, points });
+  };
+
+  const setCurrentTask = (sessionId: string, index: number) => {
+    socketRef.current?.emit('setCurrentTask', { sessionId, index });
+  };
+
+  const reorderTasks = (sessionId: string, oldIndex: number, newIndex: number) => {
+    socketRef.current?.emit('reorderTasks', { sessionId, oldIndex, newIndex });
+  };
+
   return {
     socketId: socketRef.current?.id,
     userId,
@@ -136,6 +148,9 @@ export const useSocket = () => {
     proposeAdminTransfer,
     acceptAdminTransfer,
     declineAdminTransfer,
+    saveTaskPoints,
+    setCurrentTask,
+    reorderTasks,
     setError,
   };
 };

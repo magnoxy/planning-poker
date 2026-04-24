@@ -201,6 +201,37 @@ class RoomManager {
     }
     return undefined;
   }
+
+  saveTaskPoints(sessionId: string, index: number, points: string): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session && session.tasks[index]) {
+      session.tasks[index].points = points;
+      return session;
+    }
+    return undefined;
+  }
+
+  reorderTasks(sessionId: string, oldIndex: number, newIndex: number): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      const tasks = [...session.tasks];
+      const [movedTask] = tasks.splice(oldIndex, 1);
+      tasks.splice(newIndex, 0, movedTask);
+      session.tasks = tasks;
+
+      // Adjust currentTaskIndex if the active task moved
+      if (session.currentTaskIndex === oldIndex) {
+        session.currentTaskIndex = newIndex;
+      } else if (session.currentTaskIndex > oldIndex && session.currentTaskIndex <= newIndex) {
+        session.currentTaskIndex -= 1;
+      } else if (session.currentTaskIndex < oldIndex && session.currentTaskIndex >= newIndex) {
+        session.currentTaskIndex += 1;
+      }
+
+      return session;
+    }
+    return undefined;
+  }
 }
 
 export const roomManager = new RoomManager();

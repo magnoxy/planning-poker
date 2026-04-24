@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [~] **Track: Improvements v0.1.1: Session Persistence, Admin Transfer, and Card Management**
+- [x] **Track: Improvements v0.1.1: Session Persistence, Admin Transfer, and Card Management**
   *Link: [./tracks/improvements_v011_20260423/](./tracks/improvements_v011_20260423/)*

@@ -11,7 +11,6 @@ function App() {
     createRoom,
     joinRoom,
     vote,
-    revealVotes,
     resetVotes,
     revealWithCountdown,
     importTasks,
@@ -23,6 +22,9 @@ function App() {
     proposeAdminTransfer,
     acceptAdminTransfer,
     declineAdminTransfer,
+    saveTaskPoints,
+    setCurrentTask,
+    reorderTasks,
   } = useSocket();
 
   return (
@@ -49,6 +51,9 @@ function App() {
           onProposeAdminTransfer={(targetUserId) => proposeAdminTransfer(session.id, targetUserId)}
           onAcceptAdminTransfer={() => acceptAdminTransfer(session.id)}
           onDeclineAdminTransfer={() => declineAdminTransfer(session.id)}
+          onSaveTaskPoints={(index, points) => saveTaskPoints(session.id, index, points)}
+          onSetCurrentTask={(index) => setCurrentTask(session.id, index)}
+          onReorderTasks={(oldIndex, newIndex) => reorderTasks(session.id, oldIndex, newIndex)}
         />
       )}
     </div>

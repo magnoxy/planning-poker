@@ -18,4 +18,5 @@ export interface Session {
   votes: Record<string, string>; // userId -> value
   showVotes: boolean;
   countdown?: number;
+  pendingAdminId?: string;
 }

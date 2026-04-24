@@ -132,6 +132,27 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('saveTaskPoints', ({ sessionId, index, points }: { sessionId: string; index: number; points: string }) => {
+    const session = roomManager.saveTaskPoints(sessionId, index, points);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
+  socket.on('setCurrentTask', ({ sessionId, index }: { sessionId: string; index: number }) => {
+    const session = roomManager.setCurrentTask(sessionId, index);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
+  socket.on('reorderTasks', ({ sessionId, oldIndex, newIndex }: { sessionId: string; oldIndex: number; newIndex: number }) => {
+    const session = roomManager.reorderTasks(sessionId, oldIndex, newIndex);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
   socket.on('disconnecting', () => {
     /* 
     Keep participants even after disconnect for session persistence.

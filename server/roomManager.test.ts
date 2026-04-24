@@ -69,4 +69,36 @@ describe('RoomManager', () => {
     const session = roomManager.transferAdmin(sessionId, userId);
     expect(session?.adminId).toBe(userId);
   });
+
+  it('should allow setting current task by index', () => {
+    roomManager.updateTasks(sessionId, [
+      { title: 'Task 1', description: 'D1' },
+      { title: 'Task 2', description: 'D2' },
+      { title: 'Task 3', description: 'D3' }
+    ]);
+    
+    roomManager.setCurrentTask(sessionId, 2);
+    const session = roomManager.getSession(sessionId);
+    expect(session?.currentTaskIndex).toBe(2);
+  });
+
+  it('should save points to a specific task', () => {
+    roomManager.updateTasks(sessionId, [{ title: 'Task 1', description: 'D1' }]);
+    roomManager.saveTaskPoints(sessionId, 0, '8');
+    const session = roomManager.getSession(sessionId);
+    expect(session?.tasks[0].points).toBe('8');
+  });
+
+  it('should reorder tasks', () => {
+    const tasks = [
+      { title: 'Task 1', description: 'D1' },
+      { title: 'Task 2', description: 'D2' }
+    ];
+    roomManager.updateTasks(sessionId, tasks);
+    
+    // @ts-ignore
+    const session = roomManager.reorderTasks(sessionId, 1, 0); // Move Task 2 to index 0
+    expect(session?.tasks[0].title).toBe('Task 2');
+    expect(session?.tasks[1].title).toBe('Task 1');
+  });
 });
