@@ -8,11 +8,11 @@
     - [x] Create UI components to add a manual card.
     - [x] Create UI components/modals to edit a selected card.
     - [x] Emit socket events and update server state.
-- [~] Task: Implement Card Removal and UI Fixes
-    - [ ] Write unit tests for removing cards (server and client).
-    - [ ] Implement remove card logic on server.
-    - [ ] Implement remove card logic on client hook.
-    - [ ] Update UI to include Remove button (admin only) and fix Save/Cancel button sizes.
+- [x] Task: Implement Card Removal and UI Fixes 9c36305
+    - [x] Write unit tests for removing cards (server and client).
+    - [x] Implement remove card logic on server.
+    - [x] Implement remove card logic on client hook.
+    - [x] Update UI to include Remove button (admin only) and fix Save/Cancel button sizes.
 - [x] Task: Conductor - User Manual Verification 'Card Management' (Protocol in workflow.md)
 
 ## Phase 2: Countdown for Reveal
