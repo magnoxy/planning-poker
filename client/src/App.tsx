@@ -18,6 +18,7 @@ function App() {
     prevTask,
     addTask,
     editTask,
+    removeTask,
   } = useSocket();
 
   return (
@@ -40,6 +41,7 @@ function App() {
           onPrev={() => prevTask(session.id)}
           onAddTask={(task) => addTask(session.id, task)}
           onEditTask={(index, task) => editTask(session.id, index, task)}
+          onRemoveTask={(index) => removeTask(session.id, index)}
         />
       )}
     </div>

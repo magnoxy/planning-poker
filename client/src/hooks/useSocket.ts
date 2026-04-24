@@ -67,6 +67,10 @@ export const useSocket = () => {
     socketRef.current?.emit('editTask', { sessionId, index, task });
   };
 
+  const removeTask = (sessionId: string, index: number) => {
+    socketRef.current?.emit('removeTask', { sessionId, index });
+  };
+
   return {
     socketId: socketRef.current?.id,
     session,
@@ -81,6 +85,7 @@ export const useSocket = () => {
     prevTask,
     addTask,
     editTask,
+    removeTask,
     setError,
   };
 };

@@ -13,6 +13,7 @@ interface SessionProps {
   onPrev: () => void;
   onAddTask: (task: Task) => void;
   onEditTask: (index: number, task: Task) => void;
+  onRemoveTask: (index: number) => void;
 }
 
 const CARDS = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
@@ -28,6 +29,7 @@ export const Session: React.FC<SessionProps> = ({
   onPrev,
   onAddTask,
   onEditTask,
+  onRemoveTask,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAddingTask, setIsAddingTask] = React.useState(false);
@@ -157,8 +159,8 @@ export const Session: React.FC<SessionProps> = ({
                 style={{ width: '100%', marginBottom: '0.5rem' }}
               />
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button type="submit" style={{ flex: 1 }}>Save</button>
-                <button type="button" onClick={() => { setIsAddingTask(false); setEditingIndex(null); }} className="secondary-btn" style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" style={{ flex: 1, padding: '0.5rem' }}>Save</button>
+                <button type="button" onClick={() => { setIsAddingTask(false); setEditingIndex(null); }} className="secondary-btn" style={{ flex: 1, padding: '0.5rem' }}>Cancel</button>
               </div>
             </form>
           )}
@@ -186,18 +188,27 @@ export const Session: React.FC<SessionProps> = ({
               className={`task-item ${index === session.currentTaskIndex ? 'active' : ''}`}
               style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <div>
-                <strong>{task.title}</strong>
-                {task.points && <span className="status-badge voted" style={{ marginLeft: '10px' }}>{task.points} pts</span>}
+              <div style={{ flex: 1, marginRight: '10px' }}>
+                <strong style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>{task.title}</strong>
+                {task.points && <span className="status-badge voted" style={{ fontSize: '10px' }}>{task.points} pts</span>}
               </div>
               {isAdmin && (
-                <button 
-                  onClick={() => startEdit(index)}
-                  className="secondary-btn"
-                  style={{ padding: '2px 6px', fontSize: '10px' }}
-                >
-                  Edit
-                </button>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button 
+                    onClick={() => startEdit(index)}
+                    className="secondary-btn"
+                    style={{ padding: '2px 6px', fontSize: '10px' }}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    onClick={() => { if(confirm('Remove this task?')) onRemoveTask(index); }}
+                    className="secondary-btn"
+                    style={{ padding: '2px 6px', fontSize: '10px', color: '#ff4d4d' }}
+                  >
+                    Remove
+                  </button>
+                </div>
               )}
             </div>
           ))}

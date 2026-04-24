@@ -96,6 +96,13 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('removeTask', ({ sessionId, index }: { sessionId: string; index: number }) => {
+    const session = roomManager.removeTask(sessionId, index);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
   socket.on('disconnecting', () => {
     for (const room of socket.rooms) {
       if (room !== socket.id) {

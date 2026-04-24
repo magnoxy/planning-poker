@@ -77,6 +77,21 @@ class RoomManager {
     return undefined;
   }
 
+  removeTask(sessionId: string, index: number): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.tasks.splice(index, 1);
+      // Adjust currentTaskIndex if necessary
+      if (session.currentTaskIndex >= session.tasks.length && session.tasks.length > 0) {
+        session.currentTaskIndex = session.tasks.length - 1;
+      } else if (session.tasks.length === 0) {
+        session.currentTaskIndex = 0;
+      }
+      return session;
+    }
+    return undefined;
+  }
+
   vote(sessionId: string, userId: string, value: string): Session | undefined {
     const session = this.sessions.get(sessionId);
     if (session) {

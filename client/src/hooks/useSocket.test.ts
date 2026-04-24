@@ -44,4 +44,16 @@ describe('useSocket', () => {
 
     expect(mockSocket.emit).toHaveBeenCalledWith('editTask', { sessionId, index, task: updatedTask });
   });
+
+  it('should remove a task', () => {
+    const { result } = renderHook(() => useSocket());
+    const sessionId = 'TEST-123';
+    const index = 0;
+
+    act(() => {
+      result.current.removeTask(sessionId, index);
+    });
+
+    expect(mockSocket.emit).toHaveBeenCalledWith('removeTask', { sessionId, index });
+  });
 });

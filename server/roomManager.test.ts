@@ -26,4 +26,11 @@ describe('RoomManager', () => {
     const session = roomManager.editTask(sessionId, 0, updatedTask);
     expect(session?.tasks[0]).toEqual(updatedTask);
   });
+
+  it('should remove a task', () => {
+    const task = { title: 'Task 1', description: 'Desc 1' };
+    roomManager.updateTasks(sessionId, [task]);
+    const session = roomManager.removeTask(sessionId, 0);
+    expect(session?.tasks).toHaveLength(0);
+  });
 });
