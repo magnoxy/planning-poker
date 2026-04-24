@@ -46,7 +46,7 @@
     - [x] Add UI for current admin to propose transfer to a specific user.
     - [x] Add UI prompt for the target user to accept/decline.
     - [x] Update room state on server and broadcast new admin.
-- [ ] Task: Conductor - User Manual Verification 'Admin Transfer' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Admin Transfer' (Protocol in workflow.md)
 
 ## Phase 5: Direct Card Selection
 - [ ] Task: Write Tests for Direct Card Selection

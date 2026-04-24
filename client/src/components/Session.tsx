@@ -41,6 +41,7 @@ export const Session: React.FC<SessionProps> = ({
   const [isAddingTask, setIsAddingTask] = React.useState(false);
   const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
   const [taskForm, setTaskForm] = React.useState<Task>({ title: '', description: '' });
+  const [pendingTransferTarget, setPendingTransferTarget] = React.useState<{ id: string, name: string } | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -132,6 +133,19 @@ export const Session: React.FC<SessionProps> = ({
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
               <button onClick={onAcceptAdminTransfer} style={{ flex: 1 }}>Accept</button>
               <button onClick={onDeclineAdminTransfer} className="secondary-btn" style={{ flex: 1 }}>Decline</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {pendingTransferTarget && (
+        <div className="modal-overlay">
+          <div className="card" style={{ textAlign: 'center' }}>
+            <h2>Confirm Transfer</h2>
+            <p>Are you sure you want to transfer room ownership to <strong>{pendingTransferTarget.name}</strong>?</p>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+              <button onClick={() => { onProposeAdminTransfer(pendingTransferTarget.id); setPendingTransferTarget(null); }} style={{ flex: 1 }}>Confirm</button>
+              <button onClick={() => setPendingTransferTarget(null)} className="secondary-btn" style={{ flex: 1 }}>Cancel</button>
             </div>
           </div>
         </div>
@@ -296,7 +310,7 @@ export const Session: React.FC<SessionProps> = ({
               </div>
               {isAdmin && p.id !== userId && (
                 <button 
-                  onClick={() => { if(confirm(`Propose admin transfer to ${p.name}?`)) onProposeAdminTransfer(p.id); }}
+                  onClick={() => setPendingTransferTarget({ id: p.id, name: p.name })}
                   className="secondary-btn"
                   style={{ padding: '2px 6px', fontSize: '10px', marginTop: '4px', width: '100%' }}
                 >
