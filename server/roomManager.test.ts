@@ -96,7 +96,6 @@ describe('RoomManager', () => {
     ];
     roomManager.updateTasks(sessionId, tasks);
     
-    // @ts-ignore
     const session = roomManager.reorderTasks(sessionId, 1, 0); // Move Task 2 to index 0
     expect(session?.tasks[0].title).toBe('Task 2');
     expect(session?.tasks[1].title).toBe('Task 1');
