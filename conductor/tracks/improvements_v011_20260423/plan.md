@@ -60,3 +60,6 @@
     - [x] Implement drag-and-drop to reorder tasks in the sidebar.
     - [x] Emit socket event to update task order on the server.
 - [x] Task: Conductor - User Manual Verification 'Direct Card Selection' (Protocol in workflow.md)
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions a844543
