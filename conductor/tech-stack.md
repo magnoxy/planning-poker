@@ -6,6 +6,7 @@
 ## Frontend
 - **React:** For building a declarative and component-based user interface.
 - **Vite:** As the build tool and development server for fast HMR and optimized production builds.
+- **dnd-kit:** A modern, accessible, and modular drag-and-drop toolkit for React, used for task reordering.
 
 ## Backend
 - **Express.js (Node.js):** A minimal and flexible web application framework for handling API requests.
