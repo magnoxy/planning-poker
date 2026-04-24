@@ -45,4 +45,20 @@ describe('RoomManager', () => {
     const sessionAfter = roomManager.getSession(sessionId);
     expect(sessionAfter?.showVotes).toBe(true);
   });
+
+  it('should allow a participant to rejoin with the same ID', () => {
+    const userId = 'persistent-user-id';
+    const userName = 'John Doe';
+    
+    // Join with initial socket
+    roomManager.joinSession(sessionId, { id: userId, name: userName });
+    const session1 = roomManager.getSession(sessionId);
+    expect(session1?.participants).toContainEqual({ id: userId, name: userName });
+    
+    // Simulate re-join with same userId (e.g. after refresh)
+    // In a real scenario, the roomManager shouldn't care about socket.id for identity
+    const session2 = roomManager.joinSession(sessionId, { id: userId, name: userName });
+    expect(session2?.participants).toHaveLength(2); // Admin + John
+    expect(session2?.participants.filter(p => p.id === userId)).toHaveLength(1);
+  });
 });

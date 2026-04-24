@@ -67,4 +67,37 @@ describe('useSocket', () => {
 
     expect(mockSocket.emit).toHaveBeenCalledWith('startCountdown', { sessionId, durationMs: 3000 });
   });
+
+  it('should save session to localStorage when joined', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+    const mockUserId = 'test-user-id';
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => {
+      if (key === 'planning_poker_user_id') return mockUserId;
+      return null;
+    });
+
+    const { result } = renderHook(() => useSocket());
+    
+    // Simulate socket emitting sessionUpdated
+    const mockSession = { 
+      id: 'ROOM-1', 
+      adminId: 'u1', 
+      participants: [{ id: mockUserId, name: 'Test User' }], 
+      tasks: [], 
+      votes: {}, 
+      showVotes: false 
+    };
+    
+    act(() => {
+      // Find the handler for sessionUpdated and call it
+      const handler = mockSocket.on.mock.calls.find(call => call[0] === 'sessionUpdated')[1];
+      handler(mockSession);
+    });
+
+    expect(setItemSpy).toHaveBeenCalledWith('planning_poker_session', JSON.stringify({
+      sessionId: mockSession.id,
+      userName: 'Test User',
+      userId: mockUserId
+    }));
+  });
 });

@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 
 interface SessionProps {
   session: SessionType;
-  socketId?: string;
+  userId: string;
   onVote: (value: string) => void;
   onReveal: () => void;
   onReset: () => void;
@@ -20,7 +20,7 @@ const CARDS = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
 
 export const Session: React.FC<SessionProps> = ({
   session,
-  socketId,
+  userId,
   onVote,
   onReveal,
   onReset,
@@ -87,26 +87,25 @@ export const Session: React.FC<SessionProps> = ({
   };
 
   const currentTask = session.tasks[session.currentTaskIndex];
-  const isAdmin = session.adminId === socketId;
-  const myVote = session.votes[socketId || ''];
+  const isAdmin = session.adminId === userId;
+  const myVote = session.votes[userId];
 
   const calculateConsensus = () => {
-    const votes = Object.values(session.votes).filter(v => v !== '?' && v !== '☕');
-    if (votes.length === 0) return null;
+    const numericVotes = Object.values(session.votes)
+      .map(v => parseFloat(v))
+      .filter(v => !isNaN(v));
+      
+    if (numericVotes.length === 0) return null;
     
-    const counts: Record<string, number> = {};
-    let maxCount = 0;
-    let mostFrequent = '';
-
-    votes.forEach(v => {
-      counts[v] = (counts[v] || 0) + 1;
-      if (counts[v] > maxCount) {
-        maxCount = counts[v];
-        mostFrequent = v;
-      }
+    const sum = numericVotes.reduce((acc, curr) => acc + curr, 0);
+    const average = sum / numericVotes.length;
+    
+    const fibValues = [0, 1, 2, 3, 5, 8, 13, 21];
+    const closest = fibValues.reduce((prev, curr) => {
+      return (Math.abs(curr - average) < Math.abs(prev - average) ? curr : prev);
     });
 
-    return mostFrequent;
+    return closest.toString();
   };
 
   const consensusValue = session.showVotes ? calculateConsensus() : null;
@@ -267,7 +266,7 @@ export const Session: React.FC<SessionProps> = ({
           <h2>Participants</h2>
           {session.participants.map(p => (
             <div key={p.id} className="participant-item">
-              <span>{p.name} {p.id === socketId ? '(You)' : ''}</span>
+              <span>{p.name} {p.id === userId ? '(You)' : ''}</span>
               <span className={`status-badge ${session.votes[p.id] ? 'voted' : ''}`}>
                 {session.showVotes 
                   ? (session.votes[p.id] || '...') 

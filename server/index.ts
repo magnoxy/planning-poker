@@ -23,15 +23,15 @@ roomManager.onSessionUpdated = (session) => {
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on('createRoom', ({ name }: { name: string }) => {
-    const session = roomManager.createSession(socket.id, name);
+  socket.on('createRoom', ({ name, userId }: { name: string; userId: string }) => {
+    const session = roomManager.createSession(userId, name);
     socket.join(session.id);
     socket.emit('sessionUpdated', session);
-    console.log(`Room created: ${session.id} by ${name}`);
+    console.log(`Room created: ${session.id} by ${name} (${userId})`);
   });
 
-  socket.on('joinRoom', ({ sessionId, name }: { sessionId: string; name: string }) => {
-    const participant: Participant = { id: socket.id, name };
+  socket.on('joinRoom', ({ sessionId, name, userId }: { sessionId: string; name: string; userId: string }) => {
+    const participant: Participant = { id: userId, name };
     const session = roomManager.joinSession(sessionId.toUpperCase(), participant);
     if (session) {
       socket.join(session.id);
@@ -40,15 +40,14 @@ io.on('connection', (socket) => {
     } else {
       socket.emit('error', 'Room not found');
     }
-  });
+    });
 
-  socket.on('vote', ({ sessionId, value }: { sessionId: string; value: string }) => {
-    const session = roomManager.vote(sessionId, socket.id, value);
+    socket.on('vote', ({ sessionId, userId, value }: { sessionId: string; userId: string; value: string }) => {
+    const session = roomManager.vote(sessionId, userId, value);
     if (session) {
       io.to(session.id).emit('sessionUpdated', session);
     }
-  });
-
+    });
   socket.on('revealVotes', ({ sessionId }: { sessionId: string }) => {
     const session = roomManager.revealVotes(sessionId);
     if (session) {
@@ -112,14 +111,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnecting', () => {
-    for (const room of socket.rooms) {
-      if (room !== socket.id) {
-        const session = roomManager.leaveSession(room, socket.id);
-        if (session) {
-          io.to(room).emit('sessionUpdated', session);
-        }
-      }
-    }
+    /* 
+    Keep participants even after disconnect for session persistence.
+    They will be recognized by their persistent userId when rejoining.
+    */
   });
 
   socket.on('disconnect', () => {

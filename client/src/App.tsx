@@ -5,7 +5,7 @@ import './App.css';
 
 function App() {
   const {
-    socketId,
+    userId,
     session,
     error,
     createRoom,
@@ -33,7 +33,7 @@ function App() {
       ) : (
         <Session
           session={session}
-          socketId={socketId}
+          userId={userId}
           onVote={(value) => vote(session.id, value)}
           onReveal={() => revealWithCountdown(session.id)}
           onReset={() => resetVotes(session.id)}
