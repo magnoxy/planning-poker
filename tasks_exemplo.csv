@@ -1,0 +1,6 @@
+Title,Description
+"Implementar Login","Desenvolver a tela de login e integração com o backend usando JWT"
+"Refatoração do Banco de Dados","Migrar as tabelas de usuários para suportar novos campos de perfil"
+"Ajuste de Responsividade","Corrigir o layout da Dashboard para dispositivos mobile"
+"Integração com API de Pagamento","Implementar o checkout usando a API do Stripe"
+"Testes Unitários","Aumentar a cobertura de testes do módulo de autenticação"

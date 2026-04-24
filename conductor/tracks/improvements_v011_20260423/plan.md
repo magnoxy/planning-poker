@@ -1,13 +1,13 @@
 # Implementation Plan: Improvements v0.1.1
 
 ## Phase 1: Card Management
-- [ ] Task: Write Tests for Card Management
-    - [ ] Write unit tests for manually adding cards to the store/context.
-    - [ ] Write unit tests for editing existing cards in the store/context.
-- [ ] Task: Implement Card Management UI and Logic
-    - [ ] Create UI components to add a manual card.
-    - [ ] Create UI components/modals to edit a selected card.
-    - [ ] Emit socket events and update server state.
+- [x] Task: Write Tests for Card Management
+    - [x] Write unit tests for manually adding cards to the store/context.
+    - [x] Write unit tests for editing existing cards in the store/context.
+- [x] Task: Implement Card Management UI and Logic
+    - [x] Create UI components to add a manual card.
+    - [x] Create UI components/modals to edit a selected card.
+    - [x] Emit socket events and update server state.
 - [ ] Task: Conductor - User Manual Verification 'Card Management' (Protocol in workflow.md)
 
 ## Phase 2: Countdown for Reveal

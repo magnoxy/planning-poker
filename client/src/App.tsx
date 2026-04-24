@@ -16,6 +16,8 @@ function App() {
     importTasks,
     nextTask,
     prevTask,
+    addTask,
+    editTask,
   } = useSocket();
 
   return (
@@ -36,6 +38,8 @@ function App() {
           onImport={(tasks) => importTasks(session.id, tasks)}
           onNext={(points) => nextTask(session.id, points)}
           onPrev={() => prevTask(session.id)}
+          onAddTask={(task) => addTask(session.id, task)}
+          onEditTask={(index, task) => editTask(session.id, index, task)}
         />
       )}
     </div>

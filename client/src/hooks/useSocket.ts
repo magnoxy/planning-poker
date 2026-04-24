@@ -59,6 +59,14 @@ export const useSocket = () => {
     socketRef.current?.emit('prevTask', { sessionId });
   };
 
+  const addTask = (sessionId: string, task: Task) => {
+    socketRef.current?.emit('addTask', { sessionId, task });
+  };
+
+  const editTask = (sessionId: string, index: number, task: Task) => {
+    socketRef.current?.emit('editTask', { sessionId, index, task });
+  };
+
   return {
     socketId: socketRef.current?.id,
     session,
@@ -71,6 +79,8 @@ export const useSocket = () => {
     importTasks,
     nextTask,
     prevTask,
+    addTask,
+    editTask,
     setError,
   };
 };

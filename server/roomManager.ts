@@ -59,6 +59,24 @@ class RoomManager {
     return undefined;
   }
 
+  addTask(sessionId: string, task: Task): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.tasks.push(task);
+      return session;
+    }
+    return undefined;
+  }
+
+  editTask(sessionId: string, index: number, task: Task): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session && session.tasks[index]) {
+      session.tasks[index] = { ...session.tasks[index], ...task };
+      return session;
+    }
+    return undefined;
+  }
+
   vote(sessionId: string, userId: string, value: string): Session | undefined {
     const session = this.sessions.get(sessionId);
     if (session) {

@@ -82,6 +82,20 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('addTask', ({ sessionId, task }: { sessionId: string; task: Task }) => {
+    const session = roomManager.addTask(sessionId, task);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
+  socket.on('editTask', ({ sessionId, index, task }: { sessionId: string; index: number; task: Task }) => {
+    const session = roomManager.editTask(sessionId, index, task);
+    if (session) {
+      io.to(session.id).emit('sessionUpdated', session);
+    }
+  });
+
   socket.on('disconnecting', () => {
     for (const room of socket.rooms) {
       if (room !== socket.id) {

@@ -11,6 +11,8 @@ interface SessionProps {
   onImport: (tasks: Task[]) => void;
   onNext: (points?: string) => void;
   onPrev: () => void;
+  onAddTask: (task: Task) => void;
+  onEditTask: (index: number, task: Task) => void;
 }
 
 const CARDS = ['0', '1', '2', '3', '5', '8', '13', '21', '?', '☕'];
@@ -24,8 +26,13 @@ export const Session: React.FC<SessionProps> = ({
   onImport,
   onNext,
   onPrev,
+  onAddTask,
+  onEditTask,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isAddingTask, setIsAddingTask] = React.useState(false);
+  const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
+  const [taskForm, setTaskForm] = React.useState<Task>({ title: '', description: '' });
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -42,6 +49,26 @@ export const Session: React.FC<SessionProps> = ({
         },
       });
     }
+  };
+
+  const handleSaveTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!taskForm.title.trim()) return;
+
+    if (editingIndex !== null) {
+      onEditTask(editingIndex, taskForm);
+      setEditingIndex(null);
+    } else {
+      onAddTask(taskForm);
+      setIsAddingTask(false);
+    }
+    setTaskForm({ title: '', description: '' });
+  };
+
+  const startEdit = (index: number) => {
+    setEditingIndex(index);
+    setTaskForm(session.tasks[index]);
+    setIsAddingTask(false);
   };
 
   const handleExport = () => {
@@ -99,7 +126,43 @@ export const Session: React.FC<SessionProps> = ({
 
       <div className="session-main">
         <aside className="task-list">
-          <h2>Tasks ({session.tasks.length})</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ margin: 0 }}>Tasks ({session.tasks.length})</h2>
+            {isAdmin && (
+              <button 
+                onClick={() => { setIsAddingTask(true); setEditingIndex(null); setTaskForm({ title: '', description: '' }); }}
+                className="secondary-btn"
+                style={{ padding: '4px 8px', fontSize: '12px' }}
+              >
+                + Add
+              </button>
+            )}
+          </div>
+
+          {isAdmin && (isAddingTask || editingIndex !== null) && (
+            <form onSubmit={handleSaveTask} style={{ marginBottom: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px' }}>
+              <h3>{editingIndex !== null ? 'Edit Task' : 'New Task'}</h3>
+              <input
+                type="text"
+                placeholder="Title"
+                value={taskForm.title}
+                onChange={e => setTaskForm({ ...taskForm, title: e.target.value })}
+                required
+                style={{ width: '100%', marginBottom: '0.5rem' }}
+              />
+              <textarea
+                placeholder="Description"
+                value={taskForm.description}
+                onChange={e => setTaskForm({ ...taskForm, description: e.target.value })}
+                style={{ width: '100%', marginBottom: '0.5rem' }}
+              />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button type="submit" style={{ flex: 1 }}>Save</button>
+                <button type="button" onClick={() => { setIsAddingTask(false); setEditingIndex(null); }} className="secondary-btn" style={{ flex: 1 }}>Cancel</button>
+              </div>
+            </form>
+          )}
+
           {isAdmin && (
             <div style={{ marginBottom: '1rem' }}>
               <input
@@ -121,9 +184,21 @@ export const Session: React.FC<SessionProps> = ({
             <div
               key={index}
               className={`task-item ${index === session.currentTaskIndex ? 'active' : ''}`}
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <strong>{task.title}</strong>
-              {task.points && <span className="status-badge voted" style={{ marginLeft: '10px' }}>{task.points} pts</span>}
+              <div>
+                <strong>{task.title}</strong>
+                {task.points && <span className="status-badge voted" style={{ marginLeft: '10px' }}>{task.points} pts</span>}
+              </div>
+              {isAdmin && (
+                <button 
+                  onClick={() => startEdit(index)}
+                  className="secondary-btn"
+                  style={{ padding: '2px 6px', fontSize: '10px' }}
+                >
+                  Edit
+                </button>
+              )}
             </div>
           ))}
         </aside>

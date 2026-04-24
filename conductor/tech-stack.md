@@ -13,5 +13,9 @@
 ## Real-time Communication
 - **Socket.IO:** Facilitating bidirectional, real-time events between the server and the React clients for instantaneous voting and reveals.
 
+## Testing
+- **Vitest:** A blazing fast unit test framework powered by Vite, used for both client and server testing.
+- **React Testing Library:** For testing React components by simulating user interactions.
+
 ## Utility Libraries
 - **PapaParse:** For robust and fast in-browser CSV parsing (e.g., importing user stories).
