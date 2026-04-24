@@ -15,7 +15,7 @@
     - [x] Update UI to include Remove button (admin only) and fix Save/Cancel button sizes.
 - [x] Task: Conductor - User Manual Verification 'Card Management' (Protocol in workflow.md)
 
-## Phase 2: Countdown for Reveal [checkpoint: ]
+## Phase 2: Countdown for Reveal [checkpoint: c9f5b73]
 - [x] Task: Write Tests for Reveal Countdown
     - [x] Write unit tests for the countdown timer logic.
     - [x] Write socket event tests for broadcasting countdown starts.
