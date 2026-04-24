@@ -4,7 +4,7 @@
 - [x] Task: Write Tests for Card Management
     - [x] Write unit tests for manually adding cards to the store/context.
     - [x] Write unit tests for editing existing cards in the store/context.
-- [x] Task: Implement Card Management UI and Logic
+- [x] Task: Implement Card Management UI and Logic aeefd4d
     - [x] Create UI components to add a manual card.
     - [x] Create UI components/modals to edit a selected card.
     - [x] Emit socket events and update server state.
