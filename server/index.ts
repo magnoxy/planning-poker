@@ -16,6 +16,10 @@ const io = new Server(httpServer, {
   },
 });
 
+roomManager.onSessionUpdated = (session) => {
+  io.to(session.id).emit('sessionUpdated', session);
+};
+
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
@@ -57,6 +61,10 @@ io.on('connection', (socket) => {
     if (session) {
       io.to(session.id).emit('sessionUpdated', session);
     }
+  });
+
+  socket.on('startCountdown', ({ sessionId, durationMs }: { sessionId: string; durationMs?: number }) => {
+    roomManager.startCountdown(sessionId, durationMs);
   });
 
   socket.on('importTasks', ({ sessionId, tasks }: { sessionId: string; tasks: Task[] }) => {

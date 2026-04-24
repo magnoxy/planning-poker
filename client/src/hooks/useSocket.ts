@@ -47,6 +47,10 @@ export const useSocket = () => {
     socketRef.current?.emit('resetVotes', { sessionId });
   };
 
+  const revealWithCountdown = (sessionId: string, durationMs: number = 3000) => {
+    socketRef.current?.emit('startCountdown', { sessionId, durationMs });
+  };
+
   const importTasks = (sessionId: string, tasks: any[]) => {
     socketRef.current?.emit('importTasks', { sessionId, tasks });
   };
@@ -80,6 +84,7 @@ export const useSocket = () => {
     vote,
     revealVotes,
     resetVotes,
+    revealWithCountdown,
     importTasks,
     nextTask,
     prevTask,

@@ -33,4 +33,16 @@ describe('RoomManager', () => {
     const session = roomManager.removeTask(sessionId, 0);
     expect(session?.tasks).toHaveLength(0);
   });
+
+  it('should start a countdown and then reveal votes', async () => {
+    roomManager.startCountdown(sessionId, 100); // 100ms for test
+    const sessionBefore = roomManager.getSession(sessionId);
+    expect(sessionBefore?.showVotes).toBe(false);
+
+    // Wait for countdown
+    await new Promise(resolve => setTimeout(resolve, 150));
+
+    const sessionAfter = roomManager.getSession(sessionId);
+    expect(sessionAfter?.showVotes).toBe(true);
+  });
 });

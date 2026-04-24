@@ -16,12 +16,12 @@
 - [x] Task: Conductor - User Manual Verification 'Card Management' (Protocol in workflow.md)
 
 ## Phase 2: Countdown for Reveal
-- [ ] Task: Write Tests for Reveal Countdown
-    - [ ] Write unit tests for the countdown timer logic.
-    - [ ] Write socket event tests for broadcasting countdown starts.
-- [ ] Task: Implement Countdown Sequence
-    - [ ] Implement server-side countdown trigger and broadcast.
-    - [ ] Implement client-side visual timer overlay/component before showing results.
+- [x] Task: Write Tests for Reveal Countdown
+    - [x] Write unit tests for the countdown timer logic.
+    - [x] Write socket event tests for broadcasting countdown starts.
+- [x] Task: Implement Countdown Sequence
+    - [x] Implement server-side countdown trigger and broadcast.
+    - [x] Implement client-side visual timer overlay/component before showing results.
 - [ ] Task: Conductor - User Manual Verification 'Countdown for Reveal' (Protocol in workflow.md)
 
 ## Phase 3: Session Persistence

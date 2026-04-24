@@ -13,6 +13,7 @@ function App() {
     vote,
     revealVotes,
     resetVotes,
+    revealWithCountdown,
     importTasks,
     nextTask,
     prevTask,
@@ -34,7 +35,7 @@ function App() {
           session={session}
           socketId={socketId}
           onVote={(value) => vote(session.id, value)}
-          onReveal={() => revealVotes(session.id)}
+          onReveal={() => revealWithCountdown(session.id)}
           onReset={() => resetVotes(session.id)}
           onImport={(tasks) => importTasks(session.id, tasks)}
           onNext={(points) => nextTask(session.id, points)}

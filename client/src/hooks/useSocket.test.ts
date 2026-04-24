@@ -56,4 +56,15 @@ describe('useSocket', () => {
 
     expect(mockSocket.emit).toHaveBeenCalledWith('removeTask', { sessionId, index });
   });
+
+  it('should start a countdown for reveal', () => {
+    const { result } = renderHook(() => useSocket());
+    const sessionId = 'TEST-123';
+
+    act(() => {
+      result.current.revealWithCountdown(sessionId);
+    });
+
+    expect(mockSocket.emit).toHaveBeenCalledWith('startCountdown', { sessionId, durationMs: 3000 });
+  });
 });

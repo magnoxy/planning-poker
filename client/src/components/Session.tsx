@@ -113,6 +113,11 @@ export const Session: React.FC<SessionProps> = ({
 
   return (
     <div className="container">
+      {session.countdown !== undefined && (
+        <div className="countdown-overlay">
+          <div className="countdown-number">{session.countdown}</div>
+        </div>
+      )}
       <header className="session-header">
         <div>
           <h1>Session: {session.id}</h1>

@@ -2,6 +2,8 @@ import { Session, Task, Participant } from './types';
 
 class RoomManager {
   private sessions: Map<string, Session> = new Map();
+  private countdownIntervals: Map<string, NodeJS.Timeout> = new Map();
+  public onSessionUpdated?: (session: Session) => void;
 
   createSession(adminId: string, adminName: string): Session {
     const sessionId = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -129,6 +131,43 @@ class RoomManager {
       session.currentTaskIndex = index;
       session.votes = {};
       session.showVotes = false;
+      return session;
+    }
+    return undefined;
+  }
+
+  startCountdown(sessionId: string, durationMs: number = 3000): Session | undefined {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      // Clear existing countdown if any
+      const existingInterval = this.countdownIntervals.get(sessionId);
+      if (existingInterval) clearInterval(existingInterval);
+
+      let timeLeft = Math.ceil(durationMs / 1000);
+      session.countdown = timeLeft;
+      this.onSessionUpdated?.(session);
+
+      const tickMs = durationMs < 1000 ? durationMs : 1000;
+      const interval = setInterval(() => {
+        if (durationMs < 1000) {
+          timeLeft = 0;
+        } else {
+          timeLeft -= 1;
+        }
+        
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          this.countdownIntervals.delete(sessionId);
+          session.countdown = undefined;
+          this.revealVotes(sessionId);
+          this.onSessionUpdated?.(session);
+        } else {
+          session.countdown = timeLeft;
+          this.onSessionUpdated?.(session);
+        }
+      }, tickMs);
+
+      this.countdownIntervals.set(sessionId, interval);
       return session;
     }
     return undefined;

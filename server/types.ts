@@ -17,4 +17,5 @@ export interface Session {
   participants: Participant[];
   votes: Record<string, string>; // userId -> value
   showVotes: boolean;
+  countdown?: number;
 }
