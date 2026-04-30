@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import type { Session as SessionType, Task } from '../types';
 import Papa from 'papaparse';
+import storyPointsImage from '../assets/image.jpeg';
 import {
   DndContext,
   closestCenter,
@@ -395,16 +396,21 @@ export const Session: React.FC<SessionProps> = ({
             )}
           </section>
 
-          <section className="deck">
-            {CARDS.map(card => (
-              <div
-                key={card}
-                className={`deck-card ${myVote === card ? 'selected' : ''}`}
-                onClick={() => onVote(card)}
-              >
-                {card}
-              </div>
-            ))}
+          <section className="deck-container">
+            <div className="story-points-reference">
+              <img src={storyPointsImage} alt="Story Points Reference" />
+            </div>
+            <div className="deck">
+              {CARDS.map(card => (
+                <div
+                  key={card}
+                  className={`deck-card ${myVote === card ? 'selected' : ''}`}
+                  onClick={() => onVote(card)}
+                >
+                  {card}
+                </div>
+              ))}
+            </div>
           </section>
 
           {isAdmin && currentTask && (

@@ -133,12 +133,33 @@ button:disabled {
   margin-bottom: 2rem;
 }
 
+.deck-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.story-points-reference {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.story-points-reference img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .deck {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: center;
-  margin-top: 2rem;
 }
 
 .deck-card {
